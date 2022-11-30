@@ -19,6 +19,6 @@ public class CustomerImpl  implements Customer{
     }
 
     public String testMessage() {
-        return "This is the test message.";
+        return "This is the Test Message";
     }
 }
