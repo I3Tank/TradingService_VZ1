@@ -6,7 +6,7 @@ import java.util.List;
 @Remote
 public interface Customer {
 
-    public List<Object> getPublicStockQuotes();
+    public List<String> getPublicStockQuotes();
 
     public String testMessage();
 }

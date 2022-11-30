@@ -1,5 +1,6 @@
 package net.froihofer.dsfinance.bank.client;
 
+import java.util.List;
 import java.util.Properties;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -31,9 +32,14 @@ public class BankClient {
 
       Customer customer = jndiHelper.lookup("CustomerService", Customer.class);
 
-      log.error("Trying to send testMessage");
       log.error(customer.testMessage());
-      log.error("Sending should be done now..");
+
+      //TODO Doesnt go into this method
+      List<String> test = customer.getPublicStockQuotes();
+      for (String i : test) {
+          log.error(i);
+      }
+      log.debug("Client actions finished");
       //TODO: Lookup the proxy and assign it to some variable or return it by changing the
       //      return type of this method
     }
