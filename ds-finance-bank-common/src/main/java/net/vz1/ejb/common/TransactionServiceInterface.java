@@ -1,6 +1,7 @@
 package net.vz1.ejb.common;
 
-public interface TransactionServiceInterface {
+import java.util.List;
 
-    public void getPublicStockQuotes();
+public interface TransactionServiceInterface {
+    public List<String> findStockQuotesByCompanyName(String companyName);
 }

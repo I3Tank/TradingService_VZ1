@@ -7,7 +7,7 @@ import java.util.List;
 public interface CustomerInterface {
 
     //Suche nach verfügbaren Aktien
-    public String findAvailableSharesByCompanyName(String companyName);
+    public List<String> findAvailableSharesByCompanyName(String companyName);
 
     //Kaufen von Aktien
     public String buyShares(int sharesID, int quantity);

@@ -39,27 +39,11 @@ public class BankClient {
     try {
       WildflyJndiLookupHelper jndiHelper = new WildflyJndiLookupHelper(new InitialContext(props), "ds-finance-bank-ear", "ds-finance-bank-ejb", "");
 
-      //CustomerInterface customer = jndiHelper.lookup("CustomerService", CustomerInterface.class);
-      //var stockQuotes = customer.getPublicStockQuotes();
-      //log.debug("First stockQuote entry: " + stockQuotes.get(0));
+      CustomerInterface customer = jndiHelper.lookup("CustomerService", CustomerInterface.class);
+      var stockQuotes = customer.findAvailableSharesByCompanyName("Apple");
 
-      //TradingWebServiceService twss = jndiHelper.lookup("TradingWebServiceService", TradingWebServiceService.class);
-      TradingWebServiceService twss = new TradingWebServiceService();
-      TradingWebService tws = twss.getTradingWebServicePort();
-
-      BindingProvider bindingProvider = (BindingProvider) tws;
-      bindingProvider.getRequestContext().put(
-              BindingProvider.USERNAME_PROPERTY, "csdc23vz_01"
-      );
-      bindingProvider.getRequestContext().put(
-              BindingProvider.PASSWORD_PROPERTY, "uujeit9E"
-      );
-
-      var symbols = Arrays.asList("A", "B", "C", "D", "E", "F", "ABC", "LMAO", "APLE", "AAPL");
-      var qHistory = tws.getStockQuotes(symbols);
-
-      for (PublicStockQuote item : qHistory) {
-          log.debug(item.getCompanyName() + " " + item.getSymbol() + " " + item.getStockExchange() + " " + item.getFloatShares() + " " + item.getLastTradePrice());
+      for (String item : stockQuotes) {
+        log.debug(item);
       }
       log.debug("Client actions finished");
       //TODO: Lookup the proxy and assign it to some variable or return it by changing the
@@ -67,8 +51,6 @@ public class BankClient {
     }
     catch (NamingException e) {
       log.error("Failed to initialize InitialContext.",e);
-    } catch (TradingWSException_Exception e) {
-      throw new RuntimeException(e);
     }
   }
 
