@@ -1,10 +1,13 @@
 package net.vz1.service;
 
 import net.vz1.ejb.common.CustomerInterface;
+import net.vz1.entity.CustomerDAO;
+import net.vz1.entity.CustomerTranslator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.annotation.security.PermitAll;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import java.util.List;
 
 @Stateless(name="CustomerService")
@@ -13,10 +16,10 @@ public class CustomerImpl implements CustomerInterface {
 
     private static final Logger log = LoggerFactory.getLogger(CustomerImpl.class);
 
-    /*@Inject
+    @Inject
     CustomerDAO customerDAO;
     @Inject
-    CustomerTranslator customerTranslator;*/
+    CustomerTranslator customerTranslator;
 
     public List<String> findAvailableSharesByCompanyName(String companyName) {
         TransactionServiceImpl transactionService = new TransactionServiceImpl();

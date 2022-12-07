@@ -12,7 +12,7 @@ public interface EmployeeInterface extends CustomerInterface {
     */
 
     //Anlegen von Kunden, wobei für einen Kunden mindestens Vor- und Nachname, Adresse und eine Kundennummer vergeben werden.
-    public int createCustomer(String firstName, String lastName, String address, String password);
+    public void createCustomer(CustomerDTO customerDTO);
 
     //Suchen nach Kunden mittels Kundennummer oder Name des Kunden. Gehen Sie dabei davon aus, dass Kunden nicht immer ihre Kundennummer wissen.
     public CustomerInterface searchCustomerById(int customerId);
@@ -30,5 +30,7 @@ public interface EmployeeInterface extends CustomerInterface {
 
     //Abfrage des aktuell investierbaren Volumens der Bank an der Börse.
     public float checkInvestableVolume();
+
+    public String testMessage();
 
 }

@@ -1,12 +1,17 @@
 package net.vz1.service;
 
+import net.froihofer.util.jboss.WildflyAuthDBHelper;
+import net.vz1.ejb.common.CustomerDTO;
 import net.vz1.ejb.common.CustomerInterface;
 import net.vz1.ejb.common.EmployeeInterface;
+import net.vz1.entity.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.security.PermitAll;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.io.IOException;
 import java.util.List;
 
 @Stateless(name="EmployeeService")
@@ -15,28 +20,42 @@ public class EmployeeImpl extends CustomerImpl implements EmployeeInterface {
 
     private static final Logger log = LoggerFactory.getLogger(EmployeeImpl.class);
 
-    /*@Inject
+    @Inject
     EmployeeDAO employeeDAO;
     @Inject
-    EmployeeTranslator employeeTranslator;*/
+    EmployeeTranslator employeeTranslator;
+    @Inject
+    CustomerDAO customerDAO;
+    @Inject
+    CustomerTranslator customerTranslator;
 
-    public int createCustomer(String firstName, String lastName, String address, String password) {
-        /*//Create the customer
-        net.vz1.entity.Customer newCustomer = new net.vz1.entity.Customer(firstName, lastName, address, password);
+    public void createCustomer(CustomerDTO customerDTO) {
+        //Create the customer
+//        Customer newCustomer = new Customer(
+//                customerDTO.getFirstName(),
+//                customerDTO.getLastName(),
+//                customerDTO.getAddress(),
+//                customerDTO.getPassword()
+//        );
+
         //add the user into our database
-        *//*CustomerDAO customerDAO = new CustomerDAO();
-        customerDAO.persist(newCustomer);*//*
+        try {
+            Customer c = customerDAO.findById(customerDTO.getFirstName());
+            if(c == null){
+                customerDAO.persist(customerTranslator.toEntity(customerDTO));
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         //Try creating WildflyUser
         try {
             WildflyAuthDBHelper wildflyAuthDBHelper = new WildflyAuthDBHelper();
-            wildflyAuthDBHelper.addUser("", password, new String[]{"Customer"});
+            wildflyAuthDBHelper.addUser(customerDTO.getFirstName(), customerDTO.getPassword(), new String[]{"Customer"});
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        //Return the generated customerID
-        return newCustomer.getCustomerID();*/
-        return 0;
     }
 
     public CustomerInterface searchCustomerById(int customerId) {
@@ -61,5 +80,9 @@ public class EmployeeImpl extends CustomerImpl implements EmployeeInterface {
 
     public float checkInvestableVolume() {
         return 0;
+    }
+
+    public String testMessage(){
+        return "TestMessage!";
     }
 }

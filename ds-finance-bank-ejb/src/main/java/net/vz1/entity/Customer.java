@@ -2,18 +2,19 @@ package net.vz1.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.io.Serializable;
 
 @Entity
 public class Customer implements Serializable {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer customerID;
-    private String firstName;
-    private String lastName;
-    private String password;
-    private String address;
+    private String firstName = "";
+    private String lastName = "";
+    private String password = "";
+    private String address = "";
     //private Map<shares, quantity>();
 
     public Customer(){}

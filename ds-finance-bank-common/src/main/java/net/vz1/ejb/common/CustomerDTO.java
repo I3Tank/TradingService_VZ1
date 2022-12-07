@@ -1,8 +1,12 @@
 package net.vz1.ejb.common;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.io.Serializable;
 
 public class CustomerDTO implements Serializable {
+
     private Integer customerID;
     private String firstName;
     private String lastName;
@@ -13,11 +17,11 @@ public class CustomerDTO implements Serializable {
     public CustomerDTO() {
     }
 
-    public CustomerDTO(String firstName, String lastName, String password, String address) {
+    public CustomerDTO(String firstName, String lastName, String address, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.password = password;
         this.address = address;
+        this.password = password;
     }
 
     //Getter
