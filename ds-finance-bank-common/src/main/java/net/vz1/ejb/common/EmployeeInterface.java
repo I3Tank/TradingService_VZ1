@@ -1,6 +1,7 @@
 package net.vz1.ejb.common;
 
 import javax.ejb.Remote;
+import javax.persistence.PersistenceException;
 import java.util.List;
 
 @Remote
@@ -12,10 +13,10 @@ public interface EmployeeInterface extends CustomerInterface {
     */
 
     //Anlegen von Kunden, wobei für einen Kunden mindestens Vor- und Nachname, Adresse und eine Kundennummer vergeben werden.
-    public void createCustomer(CustomerDTO customerDTO);
+    public void createCustomer(CustomerDTO customerDTO) throws BankException;
 
     //Suchen nach Kunden mittels Kundennummer oder Name des Kunden. Gehen Sie dabei davon aus, dass Kunden nicht immer ihre Kundennummer wissen.
-    public CustomerInterface searchCustomerById(int customerId);
+    public CustomerDTO searchCustomerById(int customerId);
 
     public CustomerInterface searchCustomerByName(String customerName);
 

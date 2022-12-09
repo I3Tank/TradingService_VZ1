@@ -1,5 +1,6 @@
 package net.froihofer.dsfinance.bank.client;
 
+import java.beans.PersistenceDelegate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -15,10 +16,7 @@ import net.froihofer.dsfinance.ws.trading.TradingWebService;
 import net.froihofer.dsfinance.ws.trading.TradingWebServiceService;
 import net.froihofer.util.AuthCallbackHandler;
 import net.froihofer.util.WildflyJndiLookupHelper;
-import net.vz1.ejb.common.CustomerDTO;
-import net.vz1.ejb.common.CustomerInterface;
-import net.vz1.ejb.common.EmployeeInterface;
-import net.vz1.ejb.common.TransactionServiceInterface;
+import net.vz1.ejb.common.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,22 +39,26 @@ public class BankClient {
     try {
       WildflyJndiLookupHelper jndiHelper = new WildflyJndiLookupHelper(new InitialContext(props), "ds-finance-bank-ear", "ds-finance-bank-ejb", "");
 
-      //CustomerInterface customer = jndiHelper.lookup("CustomerService", CustomerInterface.class);
+      CustomerInterface customer = jndiHelper.lookup("CustomerService", CustomerInterface.class);
       EmployeeInterface employee = jndiHelper.lookup("EmployeeService", EmployeeInterface.class);
 
-      log.error(employee.testMessage());
+      //log.error(employee.testMessage());
       employee.createCustomer(new CustomerDTO("Peter", "Kurz", "StiftGasse 2", "password"));
-//      var stockQuotes = customer.findAvailableSharesByCompanyName("Apple");
-//
-//      for (String item : stockQuotes) {
-//        log.debug(item);
-//      }
+      var stockQuotes = customer.findAvailableSharesByCompanyName("Apple");
+
+      for (String item : stockQuotes) {
+        log.debug(item);
+      }
       log.debug("Client actions finished");
       //TODO: Lookup the proxy and assign it to some variable or return it by changing the
       //      return type of this method
     }
+
     catch (NamingException e) {
       log.error("Failed to initialize InitialContext.",e);
+    }
+    catch (BankException e){
+      log.error("Exception thrown ", e);
     }
   }
 

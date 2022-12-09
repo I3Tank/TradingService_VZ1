@@ -1,15 +1,13 @@
 package net.vz1.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
+@Table(name = "Customer")
 public class Customer implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Integer customerID;
     private String firstName = "";
     private String lastName = "";
@@ -20,11 +18,11 @@ public class Customer implements Serializable {
     public Customer(){}
 
     //TODO return customer ID?
-    public Customer(String firstName, String lastName, String password, String address) {
+    public Customer(String firstName, String lastName, String address, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.password = password;
         this.address = address;
+        this.password = password;
     }
 
     //Getter

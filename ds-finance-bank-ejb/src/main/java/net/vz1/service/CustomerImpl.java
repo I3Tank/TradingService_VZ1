@@ -10,6 +10,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.util.List;
 
+
 @Stateless(name="CustomerService")
 @PermitAll
 public class CustomerImpl implements CustomerInterface {

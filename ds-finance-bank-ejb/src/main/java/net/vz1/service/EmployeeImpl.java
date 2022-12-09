@@ -1,6 +1,7 @@
 package net.vz1.service;
 
 import net.froihofer.util.jboss.WildflyAuthDBHelper;
+import net.vz1.ejb.common.BankException;
 import net.vz1.ejb.common.CustomerDTO;
 import net.vz1.ejb.common.CustomerInterface;
 import net.vz1.ejb.common.EmployeeInterface;
@@ -11,8 +12,10 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.security.PermitAll;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.PersistenceException;
 import java.io.IOException;
 import java.util.List;
+
 
 @Stateless(name="EmployeeService")
 @PermitAll
@@ -29,8 +32,9 @@ public class EmployeeImpl extends CustomerImpl implements EmployeeInterface {
     @Inject
     CustomerTranslator customerTranslator;
 
-    public void createCustomer(CustomerDTO customerDTO) {
-        //Create the customer
+    public void createCustomer(CustomerDTO customerDTO) throws BankException {
+        try {
+            //Create the customer
 //        Customer newCustomer = new Customer(
 //                customerDTO.getFirstName(),
 //                customerDTO.getLastName(),
@@ -38,28 +42,35 @@ public class EmployeeImpl extends CustomerImpl implements EmployeeInterface {
 //                customerDTO.getPassword()
 //        );
 
-        //add the user into our database
-        try {
-            Customer c = customerDAO.findById(customerDTO.getFirstName());
-            if(c == null){
+            //add the user into our database
+            try {
+                //Insert check id needed.
+//                CustomerDTO c = searchCustomerById(customerDTO.getCustomerID());
+//                if (c == null) {
                 customerDAO.persist(customerTranslator.toEntity(customerDTO));
+//                }
+//                else {
+//                    log.warn("ID already taken.");
+//                }
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
 
+            //Try creating WildflyUser
+            try {
+                WildflyAuthDBHelper wildflyAuthDBHelper = new WildflyAuthDBHelper();
+                wildflyAuthDBHelper.addUser(customerDTO.getFirstName(), customerDTO.getPassword(), new String[]{"Customer"});
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        //Try creating WildflyUser
-        try {
-            WildflyAuthDBHelper wildflyAuthDBHelper = new WildflyAuthDBHelper();
-            wildflyAuthDBHelper.addUser(customerDTO.getFirstName(), customerDTO.getPassword(), new String[]{"Customer"});
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new BankException(e.getMessage());
         }
     }
 
-    public CustomerInterface searchCustomerById(int customerId) {
-        return null;
+    public CustomerDTO searchCustomerById(int customerId) {
+        return this.customerTranslator.toDTO(this.customerDAO.findById(customerId));
     }
 
     public CustomerInterface searchCustomerByName(String customerName) {
