@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.PersistenceException;
@@ -18,7 +19,7 @@ import java.util.List;
 
 
 @Stateless(name="EmployeeService")
-@PermitAll
+@RolesAllowed("Employee")
 public class EmployeeImpl extends CustomerImpl implements EmployeeInterface {
 
     private static final Logger log = LoggerFactory.getLogger(EmployeeImpl.class);
@@ -93,7 +94,7 @@ public class EmployeeImpl extends CustomerImpl implements EmployeeInterface {
         return 0;
     }
 
-    public String testMessage(){
-        return "TestMessage!";
+    public void tryAccessEmployee(){
+        //Empty Method just to check if we have access or not
     }
 }

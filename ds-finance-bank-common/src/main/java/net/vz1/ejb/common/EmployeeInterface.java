@@ -32,6 +32,6 @@ public interface EmployeeInterface extends CustomerInterface {
     //Abfrage des aktuell investierbaren Volumens der Bank an der Börse.
     public float checkInvestableVolume();
 
-    public String testMessage();
+    public void tryAccessEmployee();
 
 }
