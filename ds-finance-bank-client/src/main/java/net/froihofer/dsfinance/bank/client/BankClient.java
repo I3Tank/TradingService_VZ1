@@ -37,6 +37,7 @@ public class BankClient {
     try {
       WildflyJndiLookupHelper jndiHelper = new WildflyJndiLookupHelper(new InitialContext(props), "ds-finance-bank-ear", "ds-finance-bank-ejb", "");
 
+      //Search for the bean services
       customer = jndiHelper.lookup("CustomerService", CustomerInterface.class);
       employee = jndiHelper.lookup("EmployeeService", EmployeeInterface.class);
 

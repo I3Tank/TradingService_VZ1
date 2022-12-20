@@ -35,14 +35,6 @@ public class EmployeeImpl extends CustomerImpl implements EmployeeInterface {
 
     public void createCustomer(CustomerDTO customerDTO) throws BankException {
         try {
-            //Create the customer
-//        Customer newCustomer = new Customer(
-//                customerDTO.getFirstName(),
-//                customerDTO.getLastName(),
-//                customerDTO.getAddress(),
-//                customerDTO.getPassword()
-//        );
-
             //add the user into our database
             try {
                 //Insert check id needed.
