@@ -73,6 +73,11 @@ public class BankClient {
     var userCredentials = getUserLogin();
     getRmiProxy(userCredentials);
 
+    //Check if the account exists
+    if(customer == null && employee == null){
+      System.out.println("Invalid Credentials");
+      return;
+    }
     //From here now we know if we have a Customer or Employee
     if(isEmployee){
       //Do Employee Routine
