@@ -22,7 +22,10 @@ public class BankClient {
 
   private CustomerInterface customer;
   private EmployeeInterface employee;
+
+  private UserServiceInterface userService;
   private boolean isEmployee = false;
+  private CustomerDTO chosenCustomer;
   /**
    * Skeleton method for performing an RMI lookup
    */
@@ -37,20 +40,17 @@ public class BankClient {
     try {
       WildflyJndiLookupHelper jndiHelper = new WildflyJndiLookupHelper(new InitialContext(props), "ds-finance-bank-ear", "ds-finance-bank-ejb", "");
 
-      //Search for the bean services
-      customer = jndiHelper.lookup("CustomerService", CustomerInterface.class);
-      employee = jndiHelper.lookup("EmployeeService", EmployeeInterface.class);
+      //Search for the user service to determine if the user is employee or customer
+      userService = jndiHelper.lookup("UserService", UserServiceInterface.class);
 
-      //Try if the client has access to the customer bean
-      try {
-        customer.tryAccessCustomer();
-      }
-      //If the user has no access to the customer bean => is an employee
-      catch (EJBAccessException e){
+      //Lookup the correct service
+      if(userService.isEmployee()){
+        employee = jndiHelper.lookup("EmployeeService", EmployeeInterface.class);
         isEmployee = true;
       }
-      //TODO: Lookup the proxy and assign it to some variable or return it by changing the
-      //      return type of this method
+      else {
+        customer = jndiHelper.lookup("CustomerService", CustomerInterface.class);
+      }
     }
 
     catch (NamingException e) {
@@ -86,7 +86,11 @@ public class BankClient {
     }
   }
   private void handleCustomerInteraction(){
-    System.out.println("Press 1 for Apple StockQuotes");
+    System.out.println("Press 1 to search available shares\n");
+    System.out.println("Press 2 to buy shares\n");
+    System.out.println("Press 3 to sell shares\n");
+    System.out.println("Press 4 to list all shares of your depot\n");
+
     var userInput = myScanner.nextLine();
     switch (userInput) {
       case "1":
@@ -98,7 +102,14 @@ public class BankClient {
     }
   }
   private void handleEmployeeInteraction(){
-    System.out.println("Press 1 to add a customer account");
+    System.out.println("Press 1 to create customer account\n");
+    System.out.println("Press 2 to search customer by ID or name\n");
+    System.out.println("Press 3 to search available shares\n");
+    System.out.println("Press 4 to buy shares for a customer\n");
+    System.out.println("Press 5 to sell shares for a customer\n");
+    System.out.println("Press 6 to list all shares of customer depot\n");
+    System.out.println("Press 7 to check investable volume\n");
+
     var userInput = myScanner.nextLine();
     switch (userInput) {
       case "1":
@@ -113,11 +124,47 @@ public class BankClient {
         var password = myScanner.nextLine();
 
         try {
-          employee.createCustomer(new CustomerDTO(firstName, lastName, address, password));
+          employee.createCustomer(new CustomerDTO(null, firstName, lastName, address, password));
           System.out.println("Customer added successfully");
         }
         catch (BankException e) {
           throw new RuntimeException(e);
+        }
+        break;
+      case "2":
+        System.out.println("Press 1 to search by ID\n");
+        System.out.println("Press 2 to search by full name\n");
+        var input = myScanner.nextLine();
+        switch (input){
+          case "1":
+            System.out.println("Enter ID: ");
+            var id = Integer.parseInt(myScanner.nextLine());
+            var customer = employee.searchCustomerById(id);
+            if(customer == null){
+              System.out.println("Invalid ID");
+            }
+            else {
+              System.out.println("Customer with ID " + id + ": " + customer.getFirstName() + " " + customer.getLastName());
+            }
+            break;
+          case "2":
+            System.out.println("Enter full name: ");
+            var fullName = myScanner.nextLine();
+            var customerList = employee.searchCustomerByName(fullName);
+
+            System.out.println(customerList.size() + " Customer(s) found:\n");
+
+            for (int i = 0; i < customerList.size(); i++){
+              var c = customerList.get(i);
+              System.out.println(i + ": " + c.getFirstName() + " " +c.getLastName() + " " + c.getCustomerID() + " " + c.getAddress());
+            }
+            System.out.println("\n Enter Number of customer: ");
+            var customerNumber = Integer.parseInt(myScanner.nextLine());
+
+            chosenCustomer = customerList.get(customerNumber);
+
+            System.out.println("Chosen Customer ID: " + chosenCustomer.getCustomerID());
+            break;
         }
 
         break;

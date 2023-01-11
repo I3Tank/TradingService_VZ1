@@ -17,7 +17,8 @@ public class CustomerDTO implements Serializable {
     public CustomerDTO() {
     }
 
-    public CustomerDTO(String firstName, String lastName, String address, String password) {
+    public CustomerDTO(Integer customerID, String firstName, String lastName, String address, String password) {
+        this.customerID = customerID;
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;

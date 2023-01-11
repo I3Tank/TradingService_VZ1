@@ -1,10 +1,7 @@
 package net.vz1.service;
 
 import net.froihofer.util.jboss.WildflyAuthDBHelper;
-import net.vz1.ejb.common.BankException;
-import net.vz1.ejb.common.CustomerDTO;
-import net.vz1.ejb.common.CustomerInterface;
-import net.vz1.ejb.common.EmployeeInterface;
+import net.vz1.ejb.common.*;
 import net.vz1.entity.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +12,9 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.PersistenceException;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Stateless(name="EmployeeService")
@@ -31,16 +30,22 @@ public class EmployeeImpl extends CustomerImpl implements EmployeeInterface {
     @Inject
     CustomerDAO customerDAO;
     @Inject
+    DepotDAO depotDAO;
+    @Inject
     CustomerTranslator customerTranslator;
+    @Inject
+    DepotTranslator depotTranslator;
 
     public void createCustomer(CustomerDTO customerDTO) throws BankException {
+        var newCustomer = customerTranslator.toEntity(customerDTO);
         try {
             //add the user into our database
             try {
                 //Insert check id needed.
 //                CustomerDTO c = searchCustomerById(customerDTO.getCustomerID());
 //                if (c == null) {
-                customerDAO.persist(customerTranslator.toEntity(customerDTO));
+
+                customerDAO.persist(newCustomer);
 //                }
 //                else {
 //                    log.warn("ID already taken.");
@@ -54,6 +59,9 @@ public class EmployeeImpl extends CustomerImpl implements EmployeeInterface {
             try {
                 WildflyAuthDBHelper wildflyAuthDBHelper = new WildflyAuthDBHelper();
                 wildflyAuthDBHelper.addUser(customerDTO.getFirstName(), customerDTO.getPassword(), new String[]{"Customer"});
+                //create Depot for the customer
+                DepotDTO depotDTO = new DepotDTO(newCustomer.getCustomerID(), null, null);
+                depotDAO.persist(depotTranslator.toEntity(depotDTO));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -66,8 +74,13 @@ public class EmployeeImpl extends CustomerImpl implements EmployeeInterface {
         return this.customerTranslator.toDTO(this.customerDAO.findById(customerId));
     }
 
-    public CustomerInterface searchCustomerByName(String customerName) {
-        return null;
+    public List<CustomerDTO> searchCustomerByName(String fullName) {
+        //[0] = FirstName   [1] = LastName
+        var splitName = fullName.split(" ");
+        //Get list of customer from database
+        var customerList = this.customerDAO.findByFullName(splitName);
+        //convert list to customerDTO list
+        return this.customerTranslator.toDTOList(customerList);
     }
 
     public String buyShares(int customerNumber, String sharesID, int quantity) {
@@ -84,9 +97,5 @@ public class EmployeeImpl extends CustomerImpl implements EmployeeInterface {
 
     public float checkInvestableVolume() {
         return 0;
-    }
-
-    public void tryAccessEmployee(){
-        //Empty Method just to check if we have access or not
     }
 }

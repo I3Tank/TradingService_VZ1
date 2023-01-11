@@ -22,6 +22,4 @@ public interface CustomerInterface {
 
     //-----------------------------Testing
     public List<String> getPublicStockQuotes();
-
-    public void tryAccessCustomer();
 }

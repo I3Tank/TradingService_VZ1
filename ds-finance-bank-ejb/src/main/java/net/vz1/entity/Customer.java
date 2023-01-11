@@ -13,7 +13,7 @@ public class Customer implements Serializable {
     private String lastName = "";
     private String password = "";
     private String address = "";
-    //private Map<shares, quantity>();
+
 
     public Customer(){}
 

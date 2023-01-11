@@ -18,7 +18,7 @@ public interface EmployeeInterface extends CustomerInterface {
     //Suchen nach Kunden mittels Kundennummer oder Name des Kunden. Gehen Sie dabei davon aus, dass Kunden nicht immer ihre Kundennummer wissen.
     public CustomerDTO searchCustomerById(int customerId);
 
-    public CustomerInterface searchCustomerByName(String customerName);
+    public List<CustomerDTO> searchCustomerByName(String customerName);
 
     //Kaufen von Aktien für einen Kunden.
     public String buyShares(int customerNumber, String sharesID, int quantity);
@@ -31,7 +31,5 @@ public interface EmployeeInterface extends CustomerInterface {
 
     //Abfrage des aktuell investierbaren Volumens der Bank an der Börse.
     public float checkInvestableVolume();
-
-    public void tryAccessEmployee();
 
 }

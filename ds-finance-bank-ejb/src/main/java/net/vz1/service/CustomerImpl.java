@@ -54,8 +54,4 @@ public class CustomerImpl implements CustomerInterface {
         TransactionServiceImpl transactionService = new TransactionServiceImpl();
         return null;
     }
-
-    public void tryAccessCustomer() {
-        //Empty Method just to check if we have access or not
-    }
 }
