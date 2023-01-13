@@ -2,10 +2,12 @@ package net.vz1.entity;
 
 import net.vz1.ejb.common.CustomerDTO;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CustomerTranslator {
+
     /** Converts a DTO instance to an entity instance. */
     public Customer toEntity(CustomerDTO customerDTO) {
         if (customerDTO == null) return null;

@@ -26,6 +26,9 @@ public class BankClient {
   private UserServiceInterface userService;
   private boolean isEmployee = false;
   private CustomerDTO chosenCustomer;
+
+  private boolean applicationRunning = true;
+
   /**
    * Skeleton method for performing an RMI lookup
    */
@@ -60,7 +63,7 @@ public class BankClient {
   private String[] getUserLogin(){
     //Get the userName and password per Command Line Input
     myScanner = new Scanner(System.in);
-    System.out.println("Enter username");
+    System.out.println("Enter Customer ID");
     var userName = myScanner.nextLine();
     System.out.println("Enter password");
     var password = myScanner.nextLine();
@@ -68,7 +71,7 @@ public class BankClient {
     return new String[]{userName, password};
   }
 
-  private void run() {
+  private void run() throws BankException {
     //TODO implement the client part
     var userCredentials = getUserLogin();
     getRmiProxy(userCredentials);
@@ -90,93 +93,134 @@ public class BankClient {
       handleCustomerInteraction();
     }
   }
-  private void handleCustomerInteraction(){
-    System.out.println("Press 1 to search available shares\n");
-    System.out.println("Press 2 to buy shares\n");
-    System.out.println("Press 3 to sell shares\n");
-    System.out.println("Press 4 to list all shares of your depot\n");
+  private void handleCustomerInteraction() throws BankException {
+    String symbol;
+    int quantity;
+    while (applicationRunning) {
+      System.out.println("My id is: " + customer.getCustomerID());
 
-    var userInput = myScanner.nextLine();
-    switch (userInput) {
-      case "1":
-        var stockQuotes = customer.findAvailableSharesByCompanyName("Apple");
-        for (String item : stockQuotes) {
-          log.debug(item);
-        }
-        break;
+      System.out.println("Press 1 to search available shares\n");
+      System.out.println("Press 2 to buy shares\n");
+      System.out.println("Press 3 to sell shares\n");
+      System.out.println("Press 4 to list all shares of your depot\n");
+      System.out.println("Press X to quit\n");
+
+      var userInput = myScanner.nextLine();
+      switch (userInput) {
+        case "1":
+          var stockQuotes = customer.findAvailableSharesByCompanyName("Apple");
+          for (String item : stockQuotes) {
+            log.debug(item);
+          }
+          break;
+        case "2":
+          System.out.println("Enter Symbol: ");
+          symbol = myScanner.nextLine();
+
+          System.out.println("Enter Quantity: ");
+          quantity = Integer.parseInt(myScanner.nextLine());
+
+          System.out.println(customer.buyShares(symbol, quantity));
+          break;
+        case "3":
+          System.out.println("Enter Symbol: ");
+          symbol = myScanner.nextLine();
+
+          System.out.println("Enter Quantity: ");
+          quantity = Integer.parseInt(myScanner.nextLine());
+
+          System.out.println(customer.sellShares(symbol, quantity));
+          break;
+
+        case "4":
+          var sharesInDepot = customer.getDepotStockQuotes();
+
+          for (int i = 0; i < sharesInDepot.size(); i++) {
+            System.out.println(i + " " + sharesInDepot.get(i) + "\n");
+          }
+          break;
+        case "X":
+          applicationRunning = false;
+          break;
+      }
     }
   }
-  private void handleEmployeeInteraction(){
-    System.out.println("Press 1 to create customer account\n");
-    System.out.println("Press 2 to search customer by ID or name\n");
-    System.out.println("Press 3 to search available shares\n");
-    System.out.println("Press 4 to buy shares for a customer\n");
-    System.out.println("Press 5 to sell shares for a customer\n");
-    System.out.println("Press 6 to list all shares of customer depot\n");
-    System.out.println("Press 7 to check investable volume\n");
+  private void handleEmployeeInteraction() {
+    while (applicationRunning) {
 
-    var userInput = myScanner.nextLine();
-    switch (userInput) {
-      case "1":
-        //Creating an account
-        System.out.print("First Name: ");
-        var firstName = myScanner.nextLine();
-        System.out.print("\nLast Name: ");
-        var lastName = myScanner.nextLine();
-        System.out.print("\nAddress: ");
-        var address = myScanner.nextLine();
-        System.out.print("\nPassword: ");
-        var password = myScanner.nextLine();
+      System.out.println("Press 1 to create customer account\n");
+      System.out.println("Press 2 to search customer by ID or name\n");
+      System.out.println("Press 3 to search available shares\n");
+      System.out.println("Press 4 to buy shares for a customer\n");
+      System.out.println("Press 5 to sell shares for a customer\n");
+      System.out.println("Press 6 to list all shares of customer depot\n");
+      System.out.println("Press 7 to check investable volume\n");
+      System.out.println("Press X to quit\n");
 
-        try {
-          employee.createCustomer(new CustomerDTO(null, firstName, lastName, address, password));
-          System.out.println("Customer added successfully");
-        }
-        catch (BankException e) {
-          throw new RuntimeException(e);
-        }
-        break;
-      case "2":
-        System.out.println("Press 1 to search by ID\n");
-        System.out.println("Press 2 to search by full name\n");
-        var input = myScanner.nextLine();
-        switch (input){
-          case "1":
-            System.out.println("Enter ID: ");
-            var id = Integer.parseInt(myScanner.nextLine());
-            var customer = employee.searchCustomerById(id);
-            if(customer == null){
-              System.out.println("Invalid ID");
-            }
-            else {
-              System.out.println("Customer with ID " + id + ": " + customer.getFirstName() + " " + customer.getLastName());
-            }
-            break;
-          case "2":
-            System.out.println("Enter full name: ");
-            var fullName = myScanner.nextLine();
-            var customerList = employee.searchCustomerByName(fullName);
 
-            System.out.println(customerList.size() + " Customer(s) found:\n");
+      var userInput = myScanner.nextLine();
+      switch (userInput) {
+        case "1":
+          //Creating an account
+          System.out.print("First Name: ");
+          var firstName = myScanner.nextLine();
+          System.out.print("\nLast Name: ");
+          var lastName = myScanner.nextLine();
+          System.out.print("\nAddress: ");
+          var address = myScanner.nextLine();
+          System.out.print("\nPassword: ");
+          var password = myScanner.nextLine();
 
-            for (int i = 0; i < customerList.size(); i++){
-              var c = customerList.get(i);
-              System.out.println(i + ": " + c.getFirstName() + " " +c.getLastName() + " " + c.getCustomerID() + " " + c.getAddress());
-            }
-            System.out.println("\n Enter Number of customer: ");
-            var customerNumber = Integer.parseInt(myScanner.nextLine());
+          try {
+            var id = employee.createCustomer(new CustomerDTO(null, firstName, lastName, address, password));
+            System.out.println("Customer with id: " + id + "added successfully");
+          } catch (BankException e) {
+            throw new RuntimeException(e);
+          }
+          break;
+        case "2":
+          System.out.println("Press 1 to search by ID\n");
+          System.out.println("Press 2 to search by full name\n");
+          var input = myScanner.nextLine();
+          switch (input) {
+            case "1":
+              System.out.println("Enter ID: ");
+              var id = Integer.parseInt(myScanner.nextLine());
+              var customer = employee.searchCustomerById(id);
+              if (customer == null) {
+                System.out.println("Invalid ID");
+              } else {
+                System.out.println("Customer with ID " + id + ": " + customer.getFirstName() + " " + customer.getLastName());
+              }
+              break;
+            case "2":
+              System.out.println("Enter full name: ");
+              var fullName = myScanner.nextLine();
+              var customerList = employee.searchCustomerByName(fullName);
 
-            chosenCustomer = customerList.get(customerNumber);
+              System.out.println(customerList.size() + " Customer(s) found:\n");
 
-            System.out.println("Chosen Customer ID: " + chosenCustomer.getCustomerID());
-            break;
-        }
+              for (int i = 0; i < customerList.size(); i++) {
+                var c = customerList.get(i);
+                System.out.println(i + ": " + c.getFirstName() + " " + c.getLastName() + " " + c.getCustomerID() + " " + c.getAddress());
+              }
+              System.out.println("\n Enter Number of customer: ");
+              var customerNumber = Integer.parseInt(myScanner.nextLine());
 
-        break;
+              chosenCustomer = customerList.get(customerNumber);
+
+              System.out.println("Chosen Customer ID: " + chosenCustomer.getCustomerID());
+              break;
+
+
+          }
+        case "X":
+          applicationRunning = false;
+          break;
+      }
     }
   }
-
-  public static void main(String[] args) {
+  public static void main(String[] args) throws BankException {
     BankClient client = new BankClient();
     client.run();
   }

@@ -1,50 +1,49 @@
 package net.vz1.entity;
 
-import net.vz1.ejb.common.StockQuoteDTO;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.inject.Inject;
+import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Map;
+import java.util.List;
 
 @Entity
 @Table(name = "Depot")
 public class Depot implements Serializable {
-    private Integer ownerID;
+
     @Id
     @GeneratedValue
     private Integer depotID;
 
-    //private Map<shares, quantity>();
+    @OneToOne
+    @JoinColumn(name = "Customer", referencedColumnName = "customerID")
+    private Customer customer;
 
-    //TODO
-    //private Map<StockQuoteDTO, Integer> depotEntries;
-    private Integer stockID;
-    private Integer quantity;
+    @OneToMany(mappedBy = "depot")
+    private List<DepotEntry> depotEntries;
 
-    public Depot(Integer ownerID, Integer depotID, Map<StockQuoteDTO, Integer> depotEntries) {
-        this.ownerID = ownerID;
-        this.depotID = depotID;
-        //this.depotEntries = depotEntries;
+    public Depot(Customer customer){
+        this.customer = customer;
     }
 
     public Depot() {
-
     }
 
-    public Integer getOwnerID() {
-        return ownerID;
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer){
+        this.customer = customer;
     }
 
     public Integer getDepotID() {
         return depotID;
     }
 
-    public Map<StockQuoteDTO, Integer> getDepotEntries() {
-        return null;
+    public void addDepotEntry(DepotEntry depotEntry){
+        this.depotEntries.add(depotEntry);
     }
 
-
+    public List<DepotEntry> getAllDepotEntries(){
+        return depotEntries;
+    }
 }

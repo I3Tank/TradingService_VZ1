@@ -13,7 +13,7 @@ public interface EmployeeInterface extends CustomerInterface {
     */
 
     //Anlegen von Kunden, wobei für einen Kunden mindestens Vor- und Nachname, Adresse und eine Kundennummer vergeben werden.
-    public void createCustomer(CustomerDTO customerDTO) throws BankException;
+    public Integer createCustomer(CustomerDTO customerDTO) throws BankException;
 
     //Suchen nach Kunden mittels Kundennummer oder Name des Kunden. Gehen Sie dabei davon aus, dass Kunden nicht immer ihre Kundennummer wissen.
     public CustomerDTO searchCustomerById(int customerId);

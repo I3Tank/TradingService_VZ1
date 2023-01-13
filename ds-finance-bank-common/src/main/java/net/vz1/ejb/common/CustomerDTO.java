@@ -12,7 +12,7 @@ public class CustomerDTO implements Serializable {
     private String lastName;
     private String password;
     private String address;
-    //private Map<shares, quantity>();
+    private DepotDTO depotDTO;
 
     public CustomerDTO() {
     }
@@ -23,6 +23,7 @@ public class CustomerDTO implements Serializable {
         this.lastName = lastName;
         this.address = address;
         this.password = password;
+        //this.depotDTO = depotDTO;
     }
 
     //Getter
@@ -46,6 +47,11 @@ public class CustomerDTO implements Serializable {
         return address;
     }
 
+    public DepotDTO getDepotDTO() {
+        return depotDTO;
+    }
+
+
     //Setter
     public void setCustomerID(Integer customerID) {
         this.customerID = customerID;
@@ -65,5 +71,9 @@ public class CustomerDTO implements Serializable {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public void setDepotDTO(DepotDTO depotDTO) {
+        this.depotDTO = depotDTO;
     }
 }

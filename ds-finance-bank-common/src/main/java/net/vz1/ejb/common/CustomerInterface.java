@@ -10,10 +10,10 @@ public interface CustomerInterface {
     public List<String> findAvailableSharesByCompanyName(String companyName);
 
     //Kaufen von Aktien
-    public String buyShares(int sharesID, int quantity);
+    public String buyShares(String symbol, int quantity) throws BankException;
 
     //Verkaufen von Aktien
-    public String sellShares(int sharesID, int quantity);
+    public String sellShares(String symbol, int quantity) throws BankException;
 
     //Auflisten aller Aktienanteile im Depot inkl. aktuellem Wert pro Firma und Gesamtwert des Depots
     public List<String> getDepotStockQuotes();
@@ -22,4 +22,7 @@ public interface CustomerInterface {
 
     //-----------------------------Testing
     public List<String> getPublicStockQuotes();
+
+    public Integer getCustomerID();
+
 }

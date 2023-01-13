@@ -1,30 +1,22 @@
 package net.vz1.ejb.common;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.Serializable;
 
-public class DepotDTO {
-    private Integer ownerID;
+public class DepotDTO implements Serializable {
     private Integer depotID;
 
-    //private Map<shares, quantity>();
-    private Map<StockQuoteDTO, Integer> depotEntries;
+    private Integer customerID;
 
-    public DepotDTO(Integer ownerID, Integer depotID, Map<StockQuoteDTO, Integer> depotEntries) {
-        this.ownerID = ownerID;
+    public DepotDTO(Integer depotID, Integer customerID) {
         this.depotID = depotID;
-        this.depotEntries = new HashMap<StockQuoteDTO, Integer>();
-    }
-
-    public Integer getOwnerID() {
-        return ownerID;
+        this.customerID = customerID;
     }
 
     public Integer getDepotID() {
         return depotID;
     }
 
-    public Map<StockQuoteDTO, Integer> getDepotEntries() {
-        return depotEntries;
+    public Integer getCustomerID(){
+        return customerID;
     }
 }

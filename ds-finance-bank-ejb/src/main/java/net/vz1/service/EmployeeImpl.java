@@ -36,7 +36,7 @@ public class EmployeeImpl extends CustomerImpl implements EmployeeInterface {
     @Inject
     DepotTranslator depotTranslator;
 
-    public void createCustomer(CustomerDTO customerDTO) throws BankException {
+    public Integer createCustomer(CustomerDTO customerDTO) throws BankException {
         var newCustomer = customerTranslator.toEntity(customerDTO);
         try {
             //add the user into our database
@@ -58,16 +58,23 @@ public class EmployeeImpl extends CustomerImpl implements EmployeeInterface {
             //Try creating WildflyUser
             try {
                 WildflyAuthDBHelper wildflyAuthDBHelper = new WildflyAuthDBHelper();
-                wildflyAuthDBHelper.addUser(customerDTO.getFirstName(), customerDTO.getPassword(), new String[]{"Customer"});
-                //create Depot for the customer
-                DepotDTO depotDTO = new DepotDTO(newCustomer.getCustomerID(), null, null);
-                depotDAO.persist(depotTranslator.toEntity(depotDTO));
+                wildflyAuthDBHelper.addUser(newCustomer.getCustomerID().toString(), customerDTO.getPassword(), new String[]{"Customer"});
             } catch (IOException e) {
                 throw new RuntimeException(e);
+            }
+            try {
+
+                //create Depot for the customer
+                DepotDTO depotDTO = new DepotDTO(null, newCustomer.getCustomerID());
+                depotDAO.persist(depotTranslator.toEntity(depotDTO));
+            }
+            catch (Exception e){
+                throw new BankException(e.getMessage());
             }
         } catch (Exception e) {
             throw new BankException(e.getMessage());
         }
+        return newCustomer.getCustomerID();
     }
 
     public CustomerDTO searchCustomerById(int customerId) {

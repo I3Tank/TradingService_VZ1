@@ -8,6 +8,8 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.jms.Session;
+import javax.persistence.criteria.CriteriaBuilder;
+import java.rmi.RemoteException;
 
 @Stateless(name="UserService")
 @PermitAll

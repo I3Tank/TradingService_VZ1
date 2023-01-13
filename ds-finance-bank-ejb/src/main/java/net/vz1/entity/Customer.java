@@ -14,6 +14,9 @@ public class Customer implements Serializable {
     private String password = "";
     private String address = "";
 
+    @OneToOne(mappedBy = "customer")
+    private Depot depot;
+
 
     public Customer(){}
 
@@ -23,6 +26,7 @@ public class Customer implements Serializable {
         this.lastName = lastName;
         this.address = address;
         this.password = password;
+        //this.depot = depot;
     }
 
     //Getter
@@ -46,6 +50,11 @@ public class Customer implements Serializable {
         return address;
     }
 
+
+    public Depot getDepot() {
+        return depot;
+    }
+
     //Setter
     public void setCustomerID(Integer customerID) {
         this.customerID = customerID;
@@ -67,4 +76,7 @@ public class Customer implements Serializable {
         this.address = address;
     }
 
+    public void setDepot(Depot depot) {
+        this.depot = depot;
+    }
 }
