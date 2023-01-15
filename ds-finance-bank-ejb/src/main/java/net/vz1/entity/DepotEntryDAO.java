@@ -18,6 +18,10 @@ public class DepotEntryDAO {
         entityManager.persist(depotEntry);
     }
 
+    public void update(DepotEntry depotEntry){
+        entityManager.merge(depotEntry);
+    }
+
     public void delete(DepotEntry depotEntry) {
         entityManager.remove(depotEntry);
     }

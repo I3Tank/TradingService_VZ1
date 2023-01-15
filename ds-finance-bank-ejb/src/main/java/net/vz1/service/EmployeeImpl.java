@@ -12,9 +12,11 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.PersistenceException;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 
 @Stateless(name="EmployeeService")
@@ -81,25 +83,23 @@ public class EmployeeImpl extends CustomerImpl implements EmployeeInterface {
         return this.customerTranslator.toDTO(this.customerDAO.findById(customerId));
     }
 
-    public List<CustomerDTO> searchCustomerByName(String fullName) {
-        //[0] = FirstName   [1] = LastName
-        var splitName = fullName.split(" ");
+    public List<CustomerDTO> searchCustomerByName(String[] fullName) {
         //Get list of customer from database
-        var customerList = this.customerDAO.findByFullName(splitName);
+        var customerList = this.customerDAO.findByFullName(fullName);
         //convert list to customerDTO list
         return this.customerTranslator.toDTOList(customerList);
     }
 
-    public String buyShares(int customerNumber, String sharesID, int quantity) {
-        return null;
+    public String buySharesForCustomer(int customerId, String symbol, int quantity) throws BankException {
+        return buyShares(customerId, symbol, quantity);
     }
 
-    public String sellShares(int customerNumber, String sharesID, int quantity) {
-        return null;
+    public String sellSharesForCustomer(int customerId, String symbol, int quantity) throws BankException {
+        return sellShares(customerId, symbol, quantity);
     }
 
-    public List<String> getDepotStockQuotes(int customerNumber) {
-        return null;
+    public List<String> getDepotStockQuotesForCustomer(int customerId) {
+        return getDepotStockQuotes(customerId);
     }
 
     public float checkInvestableVolume() {

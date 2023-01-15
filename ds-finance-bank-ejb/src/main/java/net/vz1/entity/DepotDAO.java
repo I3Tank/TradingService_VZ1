@@ -2,6 +2,7 @@ package net.vz1.entity;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 
 public class DepotDAO {
     @PersistenceContext

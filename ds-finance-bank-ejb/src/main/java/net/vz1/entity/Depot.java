@@ -42,8 +42,4 @@ public class Depot implements Serializable {
     public void addDepotEntry(DepotEntry depotEntry){
         this.depotEntries.add(depotEntry);
     }
-
-    public List<DepotEntry> getAllDepotEntries(){
-        return depotEntries;
-    }
 }

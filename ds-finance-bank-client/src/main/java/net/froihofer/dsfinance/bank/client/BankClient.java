@@ -1,5 +1,6 @@
 package net.froihofer.dsfinance.bank.client;
 
+import java.math.BigDecimal;
 import java.util.*;
 import javax.ejb.EJBAccessException;
 import javax.naming.Context;
@@ -99,7 +100,7 @@ public class BankClient {
     while (applicationRunning) {
       System.out.println("My id is: " + customer.getCustomerID());
 
-      System.out.println("Press 1 to search available shares\n");
+      System.out.println("Press 1 to search available shares by company name\n");
       System.out.println("Press 2 to buy shares\n");
       System.out.println("Press 3 to sell shares\n");
       System.out.println("Press 4 to list all shares of your depot\n");
@@ -108,7 +109,10 @@ public class BankClient {
       var userInput = myScanner.nextLine();
       switch (userInput) {
         case "1":
-          var stockQuotes = customer.findAvailableSharesByCompanyName("Apple");
+          System.out.println("Enter company name:");
+          var companyName = myScanner.nextLine();
+
+          var stockQuotes = customer.findAvailableSharesByCompanyName(companyName);
           for (String item : stockQuotes) {
             log.debug(item);
           }
@@ -133,11 +137,12 @@ public class BankClient {
           break;
 
         case "4":
-          var sharesInDepot = customer.getDepotStockQuotes();
+          var depotInfo = customer.getDepotStockQuotes();
 
-          for (int i = 0; i < sharesInDepot.size(); i++) {
-            System.out.println(i + " " + sharesInDepot.get(i) + "\n");
+          for (int i = 0; i < depotInfo.size() - 1; i++) {
+            System.out.println(depotInfo.get(i));
           }
+          System.out.println("\nTotal Value of Depot: " + depotInfo.get(depotInfo.size() - 1) + "€");
           break;
         case "X":
           applicationRunning = false;
@@ -145,7 +150,7 @@ public class BankClient {
       }
     }
   }
-  private void handleEmployeeInteraction() {
+  private void handleEmployeeInteraction() throws BankException {
     while (applicationRunning) {
 
       System.out.println("Press 1 to create customer account\n");
@@ -187,6 +192,7 @@ public class BankClient {
               System.out.println("Enter ID: ");
               var id = Integer.parseInt(myScanner.nextLine());
               var customer = employee.searchCustomerById(id);
+              chosenCustomer = customer;
               if (customer == null) {
                 System.out.println("Invalid ID");
               } else {
@@ -196,13 +202,18 @@ public class BankClient {
             case "2":
               System.out.println("Enter full name: ");
               var fullName = myScanner.nextLine();
-              var customerList = employee.searchCustomerByName(fullName);
+              var splitName = fullName.split(" ");
+              if(splitName.length == 1){
+                System.out.println("Please enter the full name!");
+                break;
+              }
+              var customerList = employee.searchCustomerByName(splitName);
 
               System.out.println(customerList.size() + " Customer(s) found:\n");
 
               for (int i = 0; i < customerList.size(); i++) {
                 var c = customerList.get(i);
-                System.out.println(i + ": " + c.getFirstName() + " " + c.getLastName() + " " + c.getCustomerID() + " " + c.getAddress());
+                System.out.println((i + 1) + ": " + c.getFirstName() + " " + c.getLastName() + " " + c.getCustomerID() + " " + c.getAddress());
               }
               System.out.println("\n Enter Number of customer: ");
               var customerNumber = Integer.parseInt(myScanner.nextLine());
@@ -211,9 +222,48 @@ public class BankClient {
 
               System.out.println("Chosen Customer ID: " + chosenCustomer.getCustomerID());
               break;
-
-
           }
+          break;
+        case "3":
+          System.out.println("Enter company name:");
+          var companyName = myScanner.nextLine();
+
+          var stockQuotes = employee.findAvailableSharesByCompanyName(companyName);
+          for (String item : stockQuotes) {
+            log.debug(item);
+          }
+          break;
+
+        case "4":
+          System.out.println("Enter Symbol: ");
+          var symbol = myScanner.nextLine();
+
+          System.out.println("Enter Quantity: ");
+          var quantity = Integer.parseInt(myScanner.nextLine());
+
+          try {
+            System.out.println(employee.buySharesForCustomer(chosenCustomer.getCustomerID(), symbol, quantity));
+          } catch (BankException e) {
+            throw new RuntimeException(e);
+          }
+          break;
+        case "5":
+          System.out.println("Enter Symbol: ");
+          var eSymbol = myScanner.nextLine();
+
+          System.out.println("Enter Quantity: ");
+          var eQuantity = Integer.parseInt(myScanner.nextLine());
+
+          System.out.println(employee.sellSharesForCustomer(chosenCustomer.getCustomerID(), eSymbol, eQuantity));
+          break;
+        case "6":
+          var depotInfo = employee.getDepotStockQuotesForCustomer(chosenCustomer.getCustomerID());
+
+          for (int i = 0; i < depotInfo.size() - 1; i++) {
+            System.out.println(depotInfo.get(i));
+          }
+          System.out.println("\nTotal Value of Depot: " + depotInfo.get(depotInfo.size() - 1) + "€");
+          break;
         case "X":
           applicationRunning = false;
           break;

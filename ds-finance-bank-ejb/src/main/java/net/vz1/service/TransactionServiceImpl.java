@@ -4,10 +4,13 @@ import net.froihofer.dsfinance.ws.trading.PublicStockQuote;
 import net.froihofer.dsfinance.ws.trading.TradingWSException_Exception;
 import net.froihofer.dsfinance.ws.trading.TradingWebService;
 import net.froihofer.dsfinance.ws.trading.TradingWebServiceService;
+import net.vz1.ejb.common.StockQuoteDTO;
 import net.vz1.ejb.common.TransactionServiceInterface;
 
 import javax.xml.ws.BindingProvider;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class TransactionServiceImpl implements TransactionServiceInterface {
@@ -50,6 +53,72 @@ public class TransactionServiceImpl implements TransactionServiceInterface {
             }
             return results;
 
+        } catch (TradingWSException_Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List<StockQuoteDTO> findStockQuotesBySymbol(List<String> symbol) {
+        TradingWebService tws = createConnection();
+        var stockQuoteDTOs = new ArrayList<StockQuoteDTO>();
+        try {
+            var publicStockQuotes = tws.getStockQuotes(symbol);
+
+            //Translate PublicStockQuotes => StockQuoteDTOs
+            for (PublicStockQuote publicStockQuote : publicStockQuotes) {
+                stockQuoteDTOs.add(new StockQuoteDTO(
+                        publicStockQuote.getCompanyName(),
+                        publicStockQuote.getFloatShares(),
+                        publicStockQuote.getLastTradePrice(),
+                        publicStockQuote.getLastTradeTime(),
+                        publicStockQuote.getMarketCapitalization(),
+                        publicStockQuote.getStockExchange(),
+                        publicStockQuote.getSymbol()
+                ));
+            }
+            return stockQuoteDTOs;
+        } catch (TradingWSException_Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public BigDecimal buyShares(String symbol, int quantity) {
+        TradingWebService tws = createConnection();
+        try {
+            //check if the provided symbols are valid
+            if(!checkIfValidSymbol(symbol)){ return new BigDecimal(-1); }
+
+            //if valid buy it and return the price per share
+            return tws.buy(symbol, quantity);
+        } catch (TradingWSException_Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean checkIfValidSymbol(String symbol) {
+        TradingWebService tws = createConnection();
+        try {
+            var stockQuotes = tws.getStockQuotes(Collections.singletonList(symbol));
+            //if 0 => invalid Symbol
+            if (stockQuotes.size() == 0){
+                return false;
+            }
+            else {
+                return true;
+            }
+
+        } catch (TradingWSException_Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public BigDecimal sellShares(String symbol, int quantity) {
+        TradingWebService tws = createConnection();
+        try {
+            return tws.sell(symbol, quantity);
         } catch (TradingWSException_Exception e) {
             throw new RuntimeException(e);
         }

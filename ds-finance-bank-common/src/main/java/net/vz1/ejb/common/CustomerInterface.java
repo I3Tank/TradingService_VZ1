@@ -1,6 +1,7 @@
 package net.vz1.ejb.common;
 
 import javax.ejb.Remote;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Remote
