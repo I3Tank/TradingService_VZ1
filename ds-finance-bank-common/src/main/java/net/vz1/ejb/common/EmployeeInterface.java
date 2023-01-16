@@ -2,6 +2,7 @@ package net.vz1.ejb.common;
 
 import javax.ejb.Remote;
 import javax.persistence.PersistenceException;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Remote
@@ -30,6 +31,6 @@ public interface EmployeeInterface extends CustomerInterface {
     public List<String> getDepotStockQuotesForCustomer(int customerNumber);
 
     //Abfrage des aktuell investierbaren Volumens der Bank an der Börse.
-    public float checkInvestableVolume();
+    public BigDecimal checkInvestableVolume();
 
 }

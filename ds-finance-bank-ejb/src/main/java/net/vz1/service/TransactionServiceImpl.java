@@ -123,4 +123,29 @@ public class TransactionServiceImpl implements TransactionServiceInterface {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public List<StockQuoteDTO> checkInvestableVolume(){
+        TradingWebService tws = createConnection();
+        try {
+            var stockQuoteDTOs = new ArrayList<StockQuoteDTO>();
+            var publicStockQuotes = tws.getStockQuoteHistory("TSLA");
+            //Translate PublicStockQuotes => StockQuoteDTOs
+            for (PublicStockQuote publicStockQuote : publicStockQuotes) {
+                stockQuoteDTOs.add(new StockQuoteDTO(
+                        publicStockQuote.getCompanyName(),
+                        publicStockQuote.getFloatShares(),
+                        publicStockQuote.getLastTradePrice(),
+                        publicStockQuote.getLastTradeTime(),
+                        publicStockQuote.getMarketCapitalization(),
+                        publicStockQuote.getStockExchange(),
+                        publicStockQuote.getSymbol()
+                ));
+            }
+            return stockQuoteDTOs;
+        } catch (TradingWSException_Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 }

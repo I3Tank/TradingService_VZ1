@@ -242,7 +242,11 @@ public class BankClient {
           var quantity = Integer.parseInt(myScanner.nextLine());
 
           try {
-            System.out.println(employee.buySharesForCustomer(chosenCustomer.getCustomerID(), symbol, quantity));
+            if(chosenCustomer == null){
+              System.out.println("Please select a customer first!");
+            }else {
+              System.out.println(employee.buySharesForCustomer(chosenCustomer.getCustomerID(), symbol, quantity));
+            }
           } catch (BankException e) {
             throw new RuntimeException(e);
           }
@@ -254,15 +258,28 @@ public class BankClient {
           System.out.println("Enter Quantity: ");
           var eQuantity = Integer.parseInt(myScanner.nextLine());
 
-          System.out.println(employee.sellSharesForCustomer(chosenCustomer.getCustomerID(), eSymbol, eQuantity));
+          if(chosenCustomer == null){
+            System.out.println("Please select a customer first!");
+          }else {
+            System.out.println(employee.sellSharesForCustomer(chosenCustomer.getCustomerID(), eSymbol, eQuantity));
+          }
           break;
         case "6":
-          var depotInfo = employee.getDepotStockQuotesForCustomer(chosenCustomer.getCustomerID());
+          if(chosenCustomer == null){
+            System.out.println("Please select a customer first!");
+          }else {
+            var depotInfo = employee.getDepotStockQuotesForCustomer(chosenCustomer.getCustomerID());
 
-          for (int i = 0; i < depotInfo.size() - 1; i++) {
-            System.out.println(depotInfo.get(i));
+            for (int i = 0; i < depotInfo.size() - 1; i++) {
+              System.out.println(depotInfo.get(i));
+            }
+            System.out.println("\nTotal Value of Depot: " + depotInfo.get(depotInfo.size() - 1) + "€");
           }
-          System.out.println("\nTotal Value of Depot: " + depotInfo.get(depotInfo.size() - 1) + "€");
+          break;
+        case "7":
+          var volume = employee.checkInvestableVolume();
+          System.out.println("Investable Volume: " + volume);
+
           break;
         case "X":
           applicationRunning = false;

@@ -6,13 +6,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
-import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.math.BigDecimal;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -32,6 +30,9 @@ public class CustomerImpl implements CustomerInterface {
     CustomerTranslator customerTranslator;
     @Inject
     DepotEntryDAO depotEntryDAO;
+
+    @Inject
+    BankDAO bankDAO;
 
 
     public List<String> findAvailableSharesByCompanyName(String companyName) {
@@ -89,6 +90,12 @@ public class CustomerImpl implements CustomerInterface {
                 depotEntryDAO.update(currentEntry);
             }
 
+            var bank = bankDAO.getBank();
+            var currentVolume = bank.getVolume();
+            var newVolume = currentVolume.subtract(pricePerShare.multiply(new BigDecimal(quantity)));
+            bank.setVolume(newVolume);
+            bankDAO.update(bank);
+
             return "Share " + symbol + " bought " + quantity + " times for " + pricePerShare + "€ each.";
         } catch (Exception e){
             throw new BankException(e.getMessage());
@@ -131,7 +138,6 @@ public class CustomerImpl implements CustomerInterface {
                 else if(currentEntry.getQuantity() == quantity){
                     sellPrice = tS.sellShares(currentEntry.getSymbol(), quantity);
                     depotEntryDAO.delete(currentEntry);
-                    return "All shares of " + currentEntry.getSymbol() + " sold for " + sellPrice + "€ per share.";
                 }
                 //Can sell
                 else {
@@ -140,6 +146,12 @@ public class CustomerImpl implements CustomerInterface {
                     depotEntryDAO.update(currentEntry);
                 }
             }
+
+            var bank = bankDAO.getBank();
+            var currentVolume = bank.getVolume();
+            var newVolume = currentVolume.add(sellPrice.multiply(new BigDecimal(quantity)));
+            bank.setVolume(newVolume);
+            bankDAO.update(bank);
 
             return "Share " + symbol + " sold " + quantity + " times for " + sellPrice + "€ per share.";
         } catch (Exception e){

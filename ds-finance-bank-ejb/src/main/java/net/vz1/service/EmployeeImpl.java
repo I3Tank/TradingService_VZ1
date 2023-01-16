@@ -13,10 +13,7 @@ import javax.inject.Inject;
 import javax.persistence.PersistenceException;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 
 @Stateless(name="EmployeeService")
@@ -37,6 +34,8 @@ public class EmployeeImpl extends CustomerImpl implements EmployeeInterface {
     CustomerTranslator customerTranslator;
     @Inject
     DepotTranslator depotTranslator;
+    @Inject
+    BankDAO bankDAO;
 
     public Integer createCustomer(CustomerDTO customerDTO) throws BankException {
         var newCustomer = customerTranslator.toEntity(customerDTO);
@@ -102,7 +101,8 @@ public class EmployeeImpl extends CustomerImpl implements EmployeeInterface {
         return getDepotStockQuotes(customerId);
     }
 
-    public float checkInvestableVolume() {
-        return 0;
+    public BigDecimal checkInvestableVolume() {
+        //bankDAO.persist(new Bank(new BigDecimal(1000000000)));
+        return bankDAO.getBank().getVolume();
     }
 }

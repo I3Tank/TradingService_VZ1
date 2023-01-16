@@ -11,4 +11,6 @@ public interface TransactionServiceInterface {
     public BigDecimal sellShares(String symbol, int quantity);
 
     public List<StockQuoteDTO> findStockQuotesBySymbol(List<String> symbol);
+
+    public List<StockQuoteDTO> checkInvestableVolume();
 }
