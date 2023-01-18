@@ -40,10 +40,6 @@ public class CustomerImpl implements CustomerInterface {
         return transactionService.findStockQuotesByCompanyName(companyName);
     }
 
-    //TODO How to update jpa entity, bei uns quantity?
-    //Symbol check for buy if it is a valid aktie
-    //Das ganze zeug mit Stockmarket
-    //Die Tabellen in der Datenbank aufräumen
 
     public String buyShares(String symbol, int quantity) throws BankException {
         var customerId = getCustomerID();

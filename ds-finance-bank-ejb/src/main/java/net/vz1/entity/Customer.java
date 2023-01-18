@@ -20,7 +20,6 @@ public class Customer implements Serializable {
 
     public Customer(){}
 
-    //TODO return customer ID?
     public Customer(String firstName, String lastName, String address, String password) {
         this.firstName = firstName;
         this.lastName = lastName;

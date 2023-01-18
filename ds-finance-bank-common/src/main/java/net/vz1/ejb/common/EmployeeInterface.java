@@ -5,6 +5,7 @@ import javax.persistence.PersistenceException;
 import java.math.BigDecimal;
 import java.util.List;
 
+
 @Remote
 public interface EmployeeInterface extends CustomerInterface {
 

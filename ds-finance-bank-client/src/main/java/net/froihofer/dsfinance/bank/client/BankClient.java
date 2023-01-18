@@ -54,6 +54,7 @@ public class BankClient {
       }
       else {
         customer = jndiHelper.lookup("CustomerService", CustomerInterface.class);
+      //  System.out.println("TEST: " + customer.getID());
       }
     }
 
@@ -73,7 +74,6 @@ public class BankClient {
   }
 
   private void run() throws BankException {
-    //TODO implement the client part
     var userCredentials = getUserLogin();
     getRmiProxy(userCredentials);
 
@@ -98,7 +98,7 @@ public class BankClient {
     String symbol;
     int quantity;
     while (applicationRunning) {
-      System.out.println("My id is: " + customer.getCustomerID());
+      //System.out.println("My id is: " + customer.getCustomerID());
 
       System.out.println("Press 1 to search available shares by company name\n");
       System.out.println("Press 2 to buy shares\n");
@@ -196,7 +196,7 @@ public class BankClient {
               if (customer == null) {
                 System.out.println("Invalid ID");
               } else {
-                System.out.println("Customer with ID " + id + ": " + customer.getFirstName() + " " + customer.getLastName());
+                System.out.println("Customer with ID " + id + " : " + customer.getFirstName() + " " + customer.getLastName());
               }
               break;
             case "2":
@@ -213,7 +213,7 @@ public class BankClient {
 
               for (int i = 0; i < customerList.size(); i++) {
                 var c = customerList.get(i);
-                System.out.println((i + 1) + ": " + c.getFirstName() + " " + c.getLastName() + " " + c.getCustomerID() + " " + c.getAddress());
+                System.out.println((i) + ": " + c.getFirstName() + " " + c.getLastName() + " has ID " + c.getCustomerID() + " " + c.getAddress());
               }
               System.out.println("\n Enter Number of customer: ");
               var customerNumber = Integer.parseInt(myScanner.nextLine());
